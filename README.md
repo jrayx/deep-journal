@@ -2,12 +2,13 @@
 Like to use LLMs, but don't want to give your chat data up? Use this. Everything runs on your machine and stores your chat data to a local SQLite database file (data/journal.db). Installable via a lightweight installer. (Use [DB Browser for SQLite](https://sqlitebrowser.org/) to easily browse/query/export data from SQLite .db files.)
 
 Technologies:
+- LLM Model: DeepSeek
 - Frontend: Svelte
 - Database: SQLite
 - Backend: Rust + Tauri
   - Database ORM + Migrations: Diesel
 
-## Setup
+## App Setup
 ### Create Svelte Frontend
 ```powershell
 npm create vite@latest tauri-app
@@ -84,4 +85,11 @@ Run development server:
 ```
 npm run tauri dev
 ``` -->
+
+## Model Setup
+[Download Ollama CLI](https://ollama.com/download).
+```
+ollama pull deepseek-r1:1.5b
+ollama run deepseek-r1:1.5b
+```
 
