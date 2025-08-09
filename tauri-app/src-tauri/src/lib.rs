@@ -22,7 +22,8 @@ pub fn run() {
     // attach custom commands
     .invoke_handler(tauri::generate_handler![
         commands::hello_world,
-        commands::read_file
+        commands::read_file,
+        commands::run_llm
     ])
     
     // run Tauri app

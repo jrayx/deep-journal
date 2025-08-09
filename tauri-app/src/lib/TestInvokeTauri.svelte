@@ -11,10 +11,16 @@
     
     const invokeTauriReadFile = () => {
         invoke('read_file').then((response: String) => {
-            const text = new TextDecoder("utf-8").decode(response);
-            console.log(text);
+            console.log(response);
         });
     }
+    
+    // const invokeTauriReadFile = () => {
+    //     invoke('read_file').then((response: String) => {
+    //         const text = new TextDecoder("utf-8").decode(response);
+    //         console.log(text);
+    //     });
+    // }
     
     // // example error handling
     // const invokeLogin = () => {
@@ -22,6 +28,12 @@
     //     .then((message) => console.log(message))
     //     .catch((error) => console.error(error));
     // }
+    
+    const invokeLLM = () => {
+        invoke('run_llm', { message: 'Hello!' }).then((response: String) => {
+            console.log(response);
+        });
+    }
 </script>
 
 <button onclick={invokeTauriHelloWorld}>
@@ -30,4 +42,8 @@
 
 <button onclick={invokeTauriReadFile}>
   Invoke Read File Tauri Command
+</button>
+
+<button onclick={invokeLLM}>
+  Invoke Run LLM Tauri Command
 </button>

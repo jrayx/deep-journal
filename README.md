@@ -1,5 +1,5 @@
 # deep-journal
-Like to use LLMs, but don't want to give your chat data up? Use this. Everything runs on your machine and stores your chat data to a local SQLite database file (data/journal.db). Installable via a lightweight installer. (Use [DB Browser for SQLite](https://sqlitebrowser.org/) to easily browse/query/export data from SQLite .db files.)
+Like to use LLMs, but don't want to give your chat data up? Use this. Everything runs on your machine and stores your chat data to a local SQLite database file (data/journal.db). Installable via a lightweight installer.
 
 Technologies:
 - LLM Model: DeepSeek
@@ -7,6 +7,11 @@ Technologies:
 - Database: SQLite
 - Backend: Rust + Tauri
   - Database ORM + Migrations: Diesel
+  
+## Installation
+1. [Download and install Ollama CLI](https://ollama.com/download). (This is what runs the DeepSeek model.)
+2. Go to GitHub Releases page and install deep-journal installer.
+3. Optional: install [DB Browser for SQLite](https://sqlitebrowser.org/) to browse/query/export chat data in your `journal.db` file.
 
 ## App Setup
 ### Create Svelte Frontend
