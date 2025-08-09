@@ -141,7 +141,7 @@ diesel setup
 diesel migration generate init
 ``` -->
 
-## SeaORM Installation & Setup
+<!-- ## SeaORM Installation & Setup
 Add the following dependencies to Cargo.toml:
 ```
 sea-orm = { version = "1.1.0", features = ["sqlx-sqlite", "runtime-tokio-rustls", "macros"] }
@@ -158,7 +158,7 @@ After creating tables, do the following to generate entity models:
 sea-orm-cli generate entity -u sqlite://../data/journal.db?mode=rwc -o src/entity
 ```
 
-Move the "entity" folder generated into "src" folder.
+Move the "entity" folder generated into "src" folder. -->
 
 
 <!-- Initialize migrations folder:
