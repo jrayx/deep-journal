@@ -1,5 +1,6 @@
 pub mod commands;
 pub mod db;
+pub mod entities;
 // pub mod error_handler;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]

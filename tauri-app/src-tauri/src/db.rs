@@ -1,31 +1,26 @@
 use rusqlite::{params, Connection, Result};
+use crate::entities;
 
-#[tauri::command(rename_all="snake_case")]
-pub fn get_models() -> String {
-    let conn = match Connection::open("../../data/journal.db") {
-        Ok(c) => c,
-        Err(e) => return format!("DB open error: {}", e),
-    };
+#[tauri::command(rename_all = "snake_case")]
+pub fn get_models() -> Result<Vec<entities::Model>, String> {
+    let conn = Connection::open("../../data/journal.db")
+        .map_err(|e| format!("DB open error: {}", e))?;
 
-    let mut stmt = match conn.prepare("SELECT id, name FROM models") {
-        Ok(s) => s,
-        Err(e) => return format!("Prepare error: {}", e),
-    };
+    let mut stmt = conn.prepare("SELECT id, name FROM models")
+        .map_err(|e| format!("Prepare error: {}", e))?;
 
-    let model_iter = match stmt.query_map([], |row| {
-        Ok((row.get::<_, i32>(0)?, row.get::<_, String>(1)?))
-    }) {
-        Ok(iter) => iter,
-        Err(e) => return format!("Query error: {}", e),
-    };
+    let model_iter = stmt.query_map([], |row| {
+        Ok(entities::Model {
+            id: row.get(0)?,
+            name: row.get(1)?,
+        })
+    }).map_err(|e| format!("Query error: {}", e))?;
 
-    for model in model_iter {
-        match model {
-            Ok((id, name)) => println!("Model {}: {}", id, name),
-            Err(e) => return format!("Row error: {}", e),
-        }
+    let mut models = Vec::new();
+    for model_result in model_iter {
+        let model = model_result.map_err(|e| format!("Row error: {}", e))?;
+        models.push(model);
     }
 
-    "Okay!".to_string()
+    return Ok(models);
 }
-

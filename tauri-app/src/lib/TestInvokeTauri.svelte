@@ -3,6 +3,12 @@
     // Be sure to set `app.withGlobalTauri` in `tauri.conf.json` to true
     const invoke = window.__TAURI__.core.invoke;
     
+    // define entities
+    type Model = {
+        id: number;
+        name: string;
+    };
+    
     const invokeTauriHelloWorld = () => {
         invoke('hello_world', { invoke_message: 'Hello!' }).then((response: String) => {
             console.log(response);
@@ -35,11 +41,19 @@
         });
     }
     
-    const invokeGetModels = () => {
-        invoke('get_models').then((response: String) => {
+    const invokeGetModels = async () => {
+        try {
+            const response = await invoke<Model[]>('get_models');
+            // console.log('Full response:', response);
+            console.log("Models:");
             console.log(response);
-        });
-    }
+
+            // const names: string[] = response.map(model => model.name);
+            // console.log('Names only:', names);
+        } catch (error) {
+            console.error('Failed to get models:', error);
+        }
+    };
 </script>
 
 <button onclick={invokeTauriHelloWorld}>
