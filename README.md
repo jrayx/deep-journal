@@ -1,19 +1,19 @@
 # deep-journal
-Like to use LLMs, but don't want to give your chat data up? Use this. Everything runs on your machine and stores your chat data to a local SQLite database file (data/journal.db). Installable via a lightweight installer.
+Like to use LLMs, but don't want to give your chat data up? Use this. Everything runs on your machine and stores your chat data to a local SQLite database file (data/journal.sqlite). Installable via a lightweight installer.
 
 Technologies:
 - LLM Model: DeepSeek
-- Frontend: Svelte
+- Frontend: Svelte + Tauri
 - Database: SQLite
 - Backend: Rust + Tauri
-  - Database ORM + Migrations: Diesel
+  - Database ORM + Migrations: SeaORM
   
 ## Installation
 1. [Download and install Ollama CLI](https://ollama.com/download). (This is what runs the DeepSeek model.)
 2. Go to GitHub Releases page and install deep-journal installer.
-3. Optional: install [DB Browser for SQLite](https://sqlitebrowser.org/) to browse/query/export chat data in your `journal.db` file.
+3. Optional: install [DB Browser for SQLite](https://sqlitebrowser.org/) to browse/query/export chat data in your `journal.sqlite` file.
 
-## App Setup
+## App Setup Notes
 ### Create Svelte Frontend
 ```powershell
 npm create vite@latest tauri-app
@@ -98,3 +98,48 @@ ollama pull deepseek-r1:1.5b
 ollama run deepseek-r1:1.5b
 ```
 
+<!-- ## Diesel Installation & Setup
+Install the following:
+1. [Visual Studio Build Tools](https://visualstudio.microsoft.com/downloads/) (Tools for Visual Studio > Build Tools for Visual Studio). Select "Desktop development with C++" in the Visual Studio installer UI.
+2. SQLite binaries with .lib files. To do that:
+
+Build necessary SQLite files:
+```powershell
+cd C:\projects
+git clone https://github.com/microsoft/vcpkg.git
+cd vcpkg
+.\bootstrap-vcpkg.bat
+.\vcpkg install sqlite3:x64-windows
+
+Now open Command Prompt and set env vars:
+```cmd
+set VCPKGRS_DYNAMIC=1
+set LIBRARY_PATH=C:\projects\vcpkg\installed\x64-windows\lib;%LIBRARY_PATH%
+set INCLUDE=C:\projects\vcpkg\installed\x64-windows\include;%INCLUDE%
+```
+
+Set these too (tell Rust where to find the libs):
+```cmd
+set LIB=C:\projects\vcpkg\installed\x64-windows\lib;%LIB%
+set INCLUDE=C:\projects\vcpkg\installed\x64-windows\include;%INCLUDE%
+```
+
+Finally, after setting all the env vars above (don't restart or close Command Prompt, or env vars lost!) run the command to install the Diesel CLI:
+```
+cargo install diesel_cli --no-default-features --features sqlite --verbose
+```
+
+Once that completes successfully, do:
+```
+cd C:\projects\deep-journal\tauri-app\src-tauri
+cargo add diesel --features sqlite
+cargo add dotenvy # for env var handling; Diesel will look for DATABASE_URL variable in .env file for SQLite .sqlite file path
+```
+
+Add `tauri-app/src-tauri/.env` file with `DATABASE_URL=journal.sqlite`, and then run Diesel setup using Diesel CLI:
+```
+diesel setup
+diesel migration generate init
+
+``` -->
+## SeaORM Installation & Setup
