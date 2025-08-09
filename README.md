@@ -48,6 +48,7 @@ Once setup complete, on opening of project run:
 cd tauri-app
 npm run tauri dev
 ```
+(Open WebView console on app window with ctrl+shift+I to view Svelte console.log() output.)
 
 <!-- ## Development with WSL
 Setup commands:

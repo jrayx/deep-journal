@@ -1,6 +1,8 @@
 <script lang="ts">
   // When using the Tauri API npm package:
   import { invoke } from '@tauri-apps/api/core';
+  
+  // Import app components
   import Counter from './lib/Counter.svelte'
   import TestInvokeTauri from './lib/TestInvokeTauri.svelte'
   

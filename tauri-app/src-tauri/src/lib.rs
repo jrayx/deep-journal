@@ -1,12 +1,13 @@
-
-#[tauri::command]
-fn my_custom_command() {
-  println!("I was invoked from JavaScript!");
-}
+pub mod commands;
+// pub mod error_handler;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+  
+  // build Tauri app
   tauri::Builder::default()
+    
+    // set up Tauri app builder
     .setup(|app| {
       if cfg!(debug_assertions) {
         app.handle().plugin(
@@ -17,7 +18,14 @@ pub fn run() {
       }
       Ok(())
     })
-    .invoke_handler(tauri::generate_handler![my_custom_command])
+    
+    // attach custom commands
+    .invoke_handler(tauri::generate_handler![
+        commands::hello_world,
+        commands::read_file
+    ])
+    
+    // run Tauri app
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }
