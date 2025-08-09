@@ -1,0 +1,80 @@
+# deep-journal
+My WSL notes.
+
+## Setup
+### Create Svelte Frontend
+```powershell
+npm create vite@latest tauri-app
+```
+- Framework: Svelte
+- variant: TypeScript
+
+```
+cd tauri-app
+npm install
+npm run dev
+```
+### Add Tauri (Rust) to the project
+```
+npm install --save-dev @tauri-apps/cli
+cargo init --bin src-tauri
+npx tauri init --force
+```
+Set local dev server to Vite default port `5173` (instead of Tauri's default `8080`).
+### Update package.json scripts
+Add `tauri` to list of scripts like so:
+```
+"scripts": {
+  "dev": "vite",
+  "build": "vite build",
+  "preview": "vite preview",
+  "tauri": "tauri"
+}
+```
+### Run app in dev mode
+```
+npm run tauri dev
+```
+
+## Development
+Once setup complete, on opening of project run:
+```
+cd tauri-app
+npm run tauri dev
+```
+
+<!-- ## Development with WSL
+Setup commands:
+
+Set up WSL:
+```powershell
+wsl --install
+wsl.exe -d Ubuntu
+```
+
+Install rustup for Rust lang:
+```
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+
+Install Node.js:
+```
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+\. "$HOME/.nvm/nvm.sh"
+nvm install 22
+```
+
+Tauri+Svelte app initialization commands (set Identifier as `com.deep-journal.tauri-app` and package manager `npm`):
+```
+npm create tauri-app@latest tauri-app -- --template svelte
+cd tauri-app
+sudo apt update
+sudo apt install build-essential
+npm install
+```
+
+Run development server:
+```
+npm run tauri dev
+``` -->
+
