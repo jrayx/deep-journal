@@ -1,4 +1,5 @@
 pub mod commands;
+pub mod db;
 // pub mod error_handler;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -23,7 +24,8 @@ pub fn run() {
     .invoke_handler(tauri::generate_handler![
         commands::hello_world,
         commands::read_file,
-        commands::run_llm
+        commands::run_llm,
+        db::get_models
     ])
     
     // run Tauri app

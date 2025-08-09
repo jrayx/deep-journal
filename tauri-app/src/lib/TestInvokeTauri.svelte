@@ -30,7 +30,13 @@
     // }
     
     const invokeLLM = () => {
-        invoke('run_llm', { message: 'Hello!' }).then((response: String) => {
+        invoke('run_llm', { model_name: 'deepseek-r1:1.5b', message: 'Hello!' }).then((response: String) => {
+            console.log(response);
+        });
+    }
+    
+    const invokeGetModels = () => {
+        invoke('get_models').then((response: String) => {
             console.log(response);
         });
     }
@@ -46,4 +52,8 @@
 
 <button onclick={invokeLLM}>
   Invoke Run LLM Tauri Command
+</button>
+
+<button onclick={invokeGetModels}>
+  Invoke Get Models Tauri Command
 </button>

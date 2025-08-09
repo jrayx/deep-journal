@@ -1,19 +1,18 @@
 # deep-journal
-Like to use LLMs, but don't want to give your chat data up? Use this. Everything runs on your machine and stores your chat data to a local SQLite database file (data/journal.sqlite). Installable via a lightweight installer.
+Like to use LLMs, but don't want to give your chat data up? Use this. Everything runs on your machine and stores your chat data to a local SQLite database file (data/journal.db). Installable via a lightweight installer.
 
 Technologies:
 - LLM Model: DeepSeek
 - Frontend: Svelte + Tauri
 - Database: SQLite
 - Backend: Rust + Tauri
-  - Database ORM + Migrations: SeaORM
   
 ## Installation
 1. [Download and install Ollama CLI](https://ollama.com/download). (This is what runs the DeepSeek model.)
 2. Go to GitHub Releases page and install deep-journal installer.
-3. Optional: install [DB Browser for SQLite](https://sqlitebrowser.org/) to browse/query/export chat data in your `journal.sqlite` file.
+3. Optional: install [DB Browser for SQLite](https://sqlitebrowser.org/) to browse/query/export chat data in your `journal.db` file.
 
-## App Setup Notes
+## Development Setup Notes
 ### Create Svelte Frontend
 ```powershell
 npm create vite@latest tauri-app
@@ -133,13 +132,50 @@ Once that completes successfully, do:
 ```
 cd C:\projects\deep-journal\tauri-app\src-tauri
 cargo add diesel --features sqlite
-cargo add dotenvy # for env var handling; Diesel will look for DATABASE_URL variable in .env file for SQLite .sqlite file path
+cargo add dotenvy # for env var handling; Diesel will look for DATABASE_URL variable in .env file for SQLite .db file path
 ```
 
-Add `tauri-app/src-tauri/.env` file with `DATABASE_URL=journal.sqlite`, and then run Diesel setup using Diesel CLI:
+Add `tauri-app/src-tauri/.env` file with `DATABASE_URL=journal.db`, and then run Diesel setup using Diesel CLI:
 ```
 diesel setup
 diesel migration generate init
-
 ``` -->
+
 ## SeaORM Installation & Setup
+Add the following dependencies to Cargo.toml:
+```
+sea-orm = { version = "1.1.0", features = ["sqlx-sqlite", "runtime-tokio-rustls", "macros"] }
+tokio = { version = "1.42.0", features = ["full"] }
+```
+
+Install the SeaORM CLI:
+```
+cargo install sea-orm-cli
+```
+
+After creating tables, do the following to generate entity models:
+```
+sea-orm-cli generate entity -u sqlite://../data/journal.db?mode=rwc -o src/entity
+```
+
+Move the "entity" folder generated into "src" folder.
+
+
+<!-- Initialize migrations folder:
+```
+sea-orm-cli migrate init
+```
+
+Create default migration files for our tables:
+```
+sea-orm-cli migrate generate create_tables
+```
+
+Edit the files to reflect how you want the tables to look.
+
+Then apply migrations:
+```
+sea-orm-cli migrate up --database-url sqlite://../../data/journal.db
+``` -->
+
+

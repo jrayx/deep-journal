@@ -45,12 +45,12 @@ pub fn read_file() -> String {
 // }
 
 #[tauri::command(rename_all="snake_case")]
-pub fn run_llm(message: String) -> String {
+pub fn run_llm(model_name: String, message: String) -> String {
     let input: &str = &message;
 
     let mut child = match Command::new("ollama")
         .arg("run")
-        .arg("deepseek-r1:1.5b")
+        .arg(model_name)
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .spawn() {
