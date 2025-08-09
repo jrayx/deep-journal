@@ -1,5 +1,11 @@
 # deep-journal
-My WSL notes.
+Like to use LLMs, but don't want to give your chat data up? Use this. Everything runs on your machine and stores your chat data to a local SQLite database file (data/journal.db). Installable via a lightweight installer. (Use [DB Browser for SQLite](https://sqlitebrowser.org/) to easily browse/query/export data from SQLite .db files.)
+
+Technologies:
+- Frontend: Svelte
+- Database: SQLite
+- Backend: Rust + Tauri
+  - Database ORM + Migrations: Diesel
 
 ## Setup
 ### Create Svelte Frontend
