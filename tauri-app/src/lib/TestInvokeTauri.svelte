@@ -1,13 +1,11 @@
-<script lang="ts">    
+<script lang="ts">
+    import type { Model, Chat, Message } from './types';
+    import { Sender } from './constants';
+    // console.log(Sender.System, Sender.User);
+    
     // When using the Tauri global script (if not using the npm package)
     // Be sure to set `app.withGlobalTauri` in `tauri.conf.json` to true
     const invoke = window.__TAURI__.core.invoke;
-    
-    // define entities
-    type Model = {
-        id: number;
-        name: string;
-    };
     
     const invokeTauriHelloWorld = () => {
         invoke('hello_world', { invoke_message: 'Hello!' }).then((response: String) => {
