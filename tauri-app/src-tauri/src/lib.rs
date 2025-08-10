@@ -26,7 +26,16 @@ pub fn run() {
         commands::hello_world,
         commands::read_file,
         commands::run_llm,
-        db::get_models
+        
+        db::get_models,
+        db::create_model,
+        db::delete_model,
+        db::get_chats,
+        db::create_chat,
+        db::update_chat_title,
+        db::delete_chat,
+        db::get_messages_by_chat,
+        db::create_message,
     ])
     
     // run Tauri app

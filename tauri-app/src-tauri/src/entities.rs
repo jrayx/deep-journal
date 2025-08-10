@@ -17,5 +17,6 @@ pub struct Message {
     pub id: i32,
     pub chat_id: i32,
     pub model_id: i32,
-    pub text: String
+    pub text: String,
+    pub sender: i32
 }

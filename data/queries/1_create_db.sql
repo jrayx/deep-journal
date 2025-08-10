@@ -15,6 +15,8 @@ CREATE TABLE messages (
     chat_id INTEGER NOT NULL,
     model_id INTEGER NOT NULL,
     text TEXT NOT NULL,
+    sender INTEGER NOT NULL,
+    
     FOREIGN KEY (chat_id) REFERENCES chats(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE,

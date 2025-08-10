@@ -54,6 +54,8 @@
             console.error('Failed to get models:', error);
         }
     };
+    
+    
 </script>
 
 <button onclick={invokeTauriHelloWorld}>
