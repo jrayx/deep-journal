@@ -86,10 +86,10 @@
     </div>
     <div class="menu-header">Chats</div>
     {#each chats as chat, i}
-        <div class="menu-item {chat?.id === currentChat?.id ? 'selected': ''}" onclick={() => onClickChat(chat)}>
+        <button type="button" class="menu-item {chat?.id === currentChat?.id ? 'selected': ''}" onclick={() => onClickChat(chat)}>
             <span>{chat.title}</span>
-            <DropdownButton icon="..." />
-        </div>
+            <DropdownButton icon="..." chat={chat} />
+        </button>
     {/each}
   </nav>
 </div>

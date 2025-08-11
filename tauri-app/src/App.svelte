@@ -17,6 +17,18 @@
   let currentModel: Model | null = null;
   let models: Model[] = [];
   
+  async function setCurrentChatMostRecentOrCreateNew() {
+    // if existing chats, set current chat to most recent chat
+    if (chats.length > 0) {
+      currentChat = chats[0];
+    } else {
+      // if no existing chats, create one and set that to current chat
+      let newChat = await invokeCreateChat();
+      chats = [newChat, ...chats];
+      currentChat = newChat;
+      // console.log(chats);
+    }
+  }
   
   onMount(async () => {
     // set up event handlers
@@ -29,23 +41,29 @@
       currentChat = chatSelected;
     });
     
+    bus.on('chat-deleted', (chatIdDeleted) => {
+      let newChats = chats.filter(chat => chat.id !== chatIdDeleted.chatId);
+      chats = [...newChats];
+      if (currentChat?.id === chatIdDeleted.chatId) {
+        setCurrentChatMostRecentOrCreateNew();
+      }
+    });
+    
+    bus.on('chat-renamed', (chatIdRenamed, newChatTitle) => {
+      let chat = chats.find(chat => chat.id === chatIdRenamed);
+      if (chat) {
+        chat.title = newChatTitle;
+      }
+    });
+    
     // pull existing models and set default to first model
     models = await invokeGetModels();
     currentModel = models[0];
 
     // pull existing chats
     chats = await invokeGetChats();
-
-    // if existing chats, set current chat to most recent chat
-    if (chats.length > 0) {
-      currentChat = chats[0];
-    } else {
-      // if no existing chats, create one and set that to current chat
-      let newChat = await invokeCreateChat();
-      chats = [newChat, ...chats];
-      currentChat = newChat;
-      // console.log(chats);
-    }
+    setCurrentChatMostRecentOrCreateNew();
+    
   });
   
 </script>

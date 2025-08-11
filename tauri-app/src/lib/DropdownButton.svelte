@@ -5,19 +5,26 @@
     { label: 'Delete', action: deleteChat }
   ];
   export let icon: string = '...';
+  export let chat: Chat | null = null;
   let open = false;
+  
+
+  import { invokeUpdateChatTitle, invokeDeleteChat } from './api';
+  import { bus } from './bus';
 
   function handleOption(action: () => void) {
     action();
     open = false;
   }
   
-  function renameChat() {
-      console.log("Rename clicked");
+  async function renameChat() {
+      let result = await invokeUpdateChatTitle(chat.id, "New Title");
+      bus.emit('chat-renamed', { chatId: chat.id, newTitle: result.title });
   }
-  
-  function deleteChat() {
-    console.log("Delete clicked");
+
+  async function deleteChat() {
+    let result = await invokeDeleteChat(chat.id);
+    bus.emit('chat-deleted', { chatId: chat.id });
   }
 
 </script>
