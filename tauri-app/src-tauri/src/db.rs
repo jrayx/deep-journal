@@ -104,13 +104,12 @@ pub fn create_chat() -> Result<entities::Chat, String> {
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub fn update_chat_title(chat_id: i32, new_chat_title: String) -> Result<(), String> {
+pub fn update_chat_title(chat_id: i32, new_title: String) -> Result<(), String> {
     let conn = Connection::open("../../data/journal.db")
         .map_err(|e| format!("DB open error: {}", e))?;
 
-    conn.execute("UPDATE chats SET title = ? WHERE id = ?", params![new_chat_title, chat_id])
+    conn.execute("UPDATE chats SET title = ? WHERE id = ?", params![new_title, chat_id])
         .map_err(|e| format!("Update error: {}", e))?;
-
     Ok(())
 }
 

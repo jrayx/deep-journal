@@ -53,7 +53,7 @@
 
 <main class="layout">
   <div class="sidebar">
-    <Sidebar chats={chats} />
+    <Sidebar currentChat={currentChat} chats={chats} />
   </div>
   <div class="main">
     <!-- <div class="card">

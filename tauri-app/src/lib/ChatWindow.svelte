@@ -41,7 +41,7 @@
     
     
     function loadMessages() {
-        console.log("Loading messages...")
+        // console.log("Loading messages...")
         invokeGetMessages(currentChat!.id)
         .then((fetchedMessages: Message[]) => {
             messages = fetchedMessages;
@@ -127,7 +127,7 @@
   display: flex;
   gap: 0.5rem;
   padding: 1rem;
-  border-top: 1px solid #eee;
+  /* border-top: 1px solid #eee; */
 }
 
 .input-bar input[type="text"] {
@@ -155,6 +155,7 @@
 
 
 <div bind:this={chatWindow} class="chat-window">
+    <h2>{currentChat?.title}</h2>
     
     <select class="model-dropdown" disabled>
         {#each models as model}

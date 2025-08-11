@@ -1,10 +1,11 @@
 <script lang="ts">
     // inputs
     export let chats: Chat[] = [];
+    let currentChat: Chat | null = null;
     
     import type { Chat } from './types';
-    import { invokeCreateChat } from './api';
     import { bus } from './bus';
+    import { invokeCreateChat } from './api';
 
     const onClickCreateNewChat = () => {
         // console.log("Create New Chat clicked");
@@ -12,10 +13,11 @@
             bus.emit('new-chat-created', newChat);
         });
     }
-
+    
     const onClickChat = (chat: Chat) => {
         bus.emit('chat-selected', chat);
     }
+    
 </script>
 
 <style>
@@ -23,7 +25,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 220px;
+  width: 300px;
   height: 100vh;
   background: #222;
   color: #fff;
@@ -60,6 +62,7 @@
   background: #333;
 }
 
+
 .menu-header {
     font-weight: bold;
     padding: 0.75rem 1rem;
@@ -78,9 +81,10 @@
     </div>
     <div class="menu-header">Chats</div>
     {#each chats as chat}
-        <button onclick={() => onClickChat(chat)}>
-            <div class="menu-item">{chat.title}</div>
-        </button>
+        <div class="menu-item {chat?.id === currentChat?.id ? 'selected': ''}">
+            <button onclick={() => onClickChat(chat)}>{chat.title}</button>
+            <button>...</button>
+        </div>
     {/each}
   </nav>
 </div>

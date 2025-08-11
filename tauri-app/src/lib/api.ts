@@ -61,6 +61,31 @@ export const invokeCreateChat = async () => {
     }
 }
 
+    
+export const invokeUpdateChatTitle = async (chatId: number, newTitle: string) => {
+    try {
+        const response = await invoke<Chat>('update_chat_title', { chat_id: chatId, new_title: newTitle });
+        // console.log("Updated Chat Title:");
+        // console.log(response);
+        return response;
+    } catch (error) {
+        console.error('Failed to update chat title:', error);
+        return null;
+    }
+}
+
+export const invokeDeleteChat = async (chatId: number) => {
+    try {
+        const response = await invoke<Chat>('delete_chat', { chat_id: chatId });
+        // console.log("Deleted Chat:");
+        // console.log(response);
+        return response;
+    } catch (error) {
+        console.error('Failed to delete chat:', error);
+        return null;
+    }
+}
+
 export const invokeGetMessages = async (chatId: number) => {
     try {
         const response = await invoke<Message[]>('get_messages_by_chat', { chat_id: chatId });
@@ -91,3 +116,4 @@ export const invokeCreateMessage = async (newMessage: Message) => {
         return null;
     }
 }
+
