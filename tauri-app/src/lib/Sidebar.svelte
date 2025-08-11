@@ -6,8 +6,11 @@
     
     import type { Chat } from './types';
     import { bus } from './bus';
-    import { invokeCreateChat } from './api';
+    import { invokeCreateChat, invokeUpdateChatTitle } from './api';
     import DropdownButton from './DropdownButton.svelte';
+    
+    let renamingChatId: number | null = null;
+    let renameValue: string = "";
 
     const onClickCreateNewChat = () => {
         // console.log("Create New Chat clicked");
@@ -19,8 +22,19 @@
     const onClickChat = (chat: Chat) => {
         bus.emit('chat-selected', chat);
     }
+
+    bus.on('rename-chat', ({ chatId }) => {
+        renamingChatId = chatId;
+        const chatToRename = chats.find(c => c.id === chatId);
+        renameValue = chatToRename ? chatToRename.title : "";
+    });
     
-    
+    async function submitRenameChat(chat: Chat) {
+        let result = await invokeUpdateChatTitle(chat.id, renameValue);
+        bus.emit('chat-renamed', { chatId: chat.id, newTitle: renameValue });
+        renamingChatId = null;
+    }
+
 </script>
 
 <style>
@@ -87,7 +101,16 @@
     <div class="menu-header">Chats</div>
     {#each chats as chat, i}
         <button type="button" class="menu-item {chat?.id === currentChat?.id ? 'selected': ''}" onclick={() => onClickChat(chat)}>
+            {#if renamingChatId === chat.id}
+            <input
+                type="text"
+                bind:value={renameValue}
+                onblur={() => submitRenameChat(chat)}
+                onkeydown={(e) => e.key === 'Enter' && submitRenameChat(chat)}
+            />
+            {:else}
             <span>{chat.title}</span>
+            {/if}
             <DropdownButton icon="..." chat={chat} />
         </button>
     {/each}

@@ -49,10 +49,17 @@
       }
     });
     
-    bus.on('chat-renamed', (chatIdRenamed, newChatTitle) => {
-      let chat = chats.find(chat => chat.id === chatIdRenamed);
-      if (chat) {
-        chat.title = newChatTitle;
+    bus.on('chat-renamed', ({ chatId, newTitle }) => {
+      let chat = chats.find(chat => chat.id === chatId);
+      let updatedChat = { ...chat, title: newTitle };
+      // update chats list
+      let newChats = chats.map(chat =>
+        chat.id === updatedChat.id ? updatedChat : chat
+      );
+      chats = [...newChats];
+      // update currentChat
+      if (currentChat && currentChat.id === updatedChat.id) {
+        currentChat = updatedChat;
       }
     });
     

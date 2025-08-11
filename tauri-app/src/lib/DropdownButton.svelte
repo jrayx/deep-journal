@@ -7,19 +7,33 @@
   export let icon: string = '...';
   export let chat: Chat | null = null;
   let open = false;
+  let dropdownRef: HTMLDivElement;
   
-
+  import { onMount, onDestroy } from 'svelte';
   import { invokeUpdateChatTitle, invokeDeleteChat } from './api';
   import { bus } from './bus';
+  
+  onMount(() => {
+    window.addEventListener('mousedown', handleClick);
+  });
+
+  onDestroy(() => {
+    window.removeEventListener('mousedown', handleClick);
+  });
 
   function handleOption(action: () => void) {
     action();
     open = false;
   }
   
+  function handleClick(event: MouseEvent) {
+    if (open && dropdownRef && !dropdownRef.contains(event.target as Node)) {
+      open = false;
+    }
+  }
+  
   async function renameChat() {
-      let result = await invokeUpdateChatTitle(chat.id, "New Title");
-      bus.emit('chat-renamed', { chatId: chat.id, newTitle: result.title });
+      bus.emit('rename-chat', {chatId: chat.id});
   }
 
   async function deleteChat() {
@@ -61,12 +75,12 @@
 }
 </style>
 
-<div class="dropdown-btn-container">
-  <button class="dropdown-btn" on:click={() => open = !open}>{icon}</button>
+<div class="dropdown-btn-container" bind:this={dropdownRef}>
+  <button class="dropdown-btn" onclick={() => open = !open}>{icon}</button>
   {#if open}
     <div class="dropdown-list">
       {#each options as opt}
-        <div class="dropdown-item" on:click={() => handleOption(opt.action)}>
+        <div class="dropdown-item" onclick={() => handleOption(opt.action)}>
           {opt.label}
         </div>
       {/each}
