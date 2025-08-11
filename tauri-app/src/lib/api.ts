@@ -25,8 +25,10 @@ export const invokeGetModels = async () => {
         const response = await invoke<Model[]>('get_models');
         // console.log("Models:");
         // console.log(response);
+        return response;
     } catch (error) {
         console.error('Failed to get models:', error);
+        return null;
     }
 };
 

@@ -1,7 +1,9 @@
 <script lang="ts">
-  // When using the Tauri API npm package:
   import { invoke } from '@tauri-apps/api/core';
-  // const invoke = window.__TAURI__.core.invoke;
+  import type { Model, Chat, Message } from './lib/types';
+  import { onMount } from 'svelte';
+  import { invokeGetModels, invokeGetChats, invokeCreateChat, invokeLLM } from './lib/api';
+  import { bus } from './lib/bus';
   
   // Import app components
   // import Counter from './lib/Counter.svelte'
@@ -12,11 +14,8 @@
   // manage state
   let currentChat: Chat | null = null;
   let chats: Chat[] = [];
-
-  import { onMount } from 'svelte';
-  import type { Model, Chat, Message } from './lib/types';
-  import { invokeLLM, invokeGetChats, invokeCreateChat } from './lib/api';
-  import { bus } from './lib/bus';
+  let currentModel: Model | null = null;
+  let models: Model[] = [];
   
   
   onMount(async () => {
@@ -29,6 +28,10 @@
     bus.on('chat-selected', (chatSelected) => {
       currentChat = chatSelected;
     });
+    
+    // pull existing models and set default to first model
+    models = await invokeGetModels();
+    currentModel = models[0];
 
     // pull existing chats
     chats = await invokeGetChats();
@@ -44,9 +47,7 @@
       // console.log(chats);
     }
   });
-
   
-
 </script>
 
 
@@ -58,7 +59,7 @@
     <!-- <div class="card">
       <TestInvokeTauri />
     </div> -->
-    <ChatWindow currentChat={currentChat} />
+    <ChatWindow currentChat={currentChat} models={models} currentModel={currentModel} />
   </div>
 </main>
 

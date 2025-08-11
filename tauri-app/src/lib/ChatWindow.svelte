@@ -2,7 +2,10 @@
     import type { Chat, Message } from './types';
     import { invokeGetMessages } from './api';
     import { Sender } from './constants';
+    
     export let currentChat: Chat | null = null;
+    export let models: Model[] = [];
+    export let currentModel: Model | null = null;
 
     let messages: Message[] = [];
 
@@ -44,6 +47,14 @@
   width: 100%;
 }
 
+.model-dropdown {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  opacity: 0.6;
+  pointer-events: none; /* Prevent interaction */
+}
+
 .message {
   max-width: 70%;
   padding: 0.75rem 1rem;
@@ -67,9 +78,14 @@
 
 
 <div class="chat-window">
-  {#each messages as message}
+    <select class="model-dropdown" disabled>
+        {#each models as model}
+            <option selected={model.id === currentModel?.id}>{model.name}</option>
+        {/each}
+    </select>
+    {#each messages as message}
     <div class="message {message.sender === Sender.User ? 'user' : 'system'}">
-      {message.text}
+        {message.text}
     </div>
-  {/each}
+    {/each}
 </div>
