@@ -7,10 +7,14 @@
     import { bus } from './bus';
 
     const onClickCreateNewChat = () => {
-        console.log("Create New Chat clicked");
+        // console.log("Create New Chat clicked");
         invokeCreateChat().then(newChat => {
             bus.emit('new-chat-created', newChat);
         });
+    }
+
+    const onClickChat = (chat: Chat) => {
+        bus.emit('chat-selected', chat);
     }
 </script>
 
@@ -74,7 +78,9 @@
     </div>
     <div class="menu-header">Chats</div>
     {#each chats as chat}
-      <div class="menu-item">{chat.title}</div>
+        <button onclick={() => onClickChat(chat)}>
+            <div class="menu-item">{chat.title}</div>
+        </button>
     {/each}
   </nav>
 </div>

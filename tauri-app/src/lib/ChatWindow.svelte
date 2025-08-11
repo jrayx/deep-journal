@@ -1,7 +1,10 @@
 <script lang="ts">
-  
+    import type { Chat } from './types';
+    export let currentChat: Chat | null = null;
 </script>
 
 <div>
-    <p>Chat Window</p>
+    {#if currentChat}
+        <h2>{currentChat.title}</h2>
+    {/if}
 </div>

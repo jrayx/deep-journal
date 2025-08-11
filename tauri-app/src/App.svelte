@@ -26,6 +26,10 @@
       currentChat = newChat;
     });
     
+    bus.on('chat-selected', (chatSelected) => {
+      currentChat = chatSelected;
+    });
+
     // pull existing chats
     chats = await invokeGetChats();
 
@@ -54,7 +58,7 @@
     <!-- <div class="card">
       <TestInvokeTauri />
     </div> -->
-    <ChatWindow />
+    <ChatWindow currentChat={currentChat} />
   </div>
 </main>
 
