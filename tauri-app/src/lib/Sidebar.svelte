@@ -1,7 +1,17 @@
 <script lang="ts">
-    import type {Chat} from './types';
+    // inputs
     export let chats: Chat[] = [];
     
+    import type { Chat } from './types';
+    import { invokeCreateChat } from './api';
+    import { bus } from './bus';
+
+    const onClickCreateNewChat = () => {
+        console.log("Create New Chat clicked");
+        invokeCreateChat().then(newChat => {
+            bus.emit('new-chat-created', newChat);
+        });
+    }
 </script>
 
 <style>
@@ -59,7 +69,9 @@
 <div class="sidebar">
   <div class="logo">deep-journal</div>
   <nav class="menu">
-    <div class="menu-item">New Chat</div>
+    <div class="menu-item">
+        <button onclick={onClickCreateNewChat}>[+] Create New Chat</button>
+    </div>
     <div class="menu-header">Chats</div>
     {#each chats as chat}
       <div class="menu-item">{chat.title}</div>

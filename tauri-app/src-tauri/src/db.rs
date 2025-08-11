@@ -82,18 +82,24 @@ pub fn get_chats() -> Result<Vec<entities::Chat>, String> {
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub fn create_chat(new_chat_title: String) -> Result<entities::Chat, String> {
+pub fn create_chat() -> Result<entities::Chat, String> {
     let conn = Connection::open("../../data/journal.db")
         .map_err(|e| format!("DB open error: {}", e))?;
 
-    conn.execute("INSERT INTO chats (title) VALUES (?)", params![new_chat_title])
+    let mut max_id = conn.query_row("SELECT MAX(id) FROM chats", [], |row| {
+        row.get(0)
+    }).unwrap_or(0);
+    max_id += 1;
+
+    let title = format!("New Chat (#{})", max_id);
+    conn.execute("INSERT INTO chats (title) VALUES (?)", params![title])
         .map_err(|e| format!("Insert error: {}", e))?;
 
     let last_id = conn.last_insert_rowid();
 
     Ok(entities::Chat {
         id: last_id as i32,
-        title: new_chat_title,
+        title: title,
     })
 }
 

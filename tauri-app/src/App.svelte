@@ -4,9 +4,10 @@
   // const invoke = window.__TAURI__.core.invoke;
   
   // Import app components
-  import Counter from './lib/Counter.svelte'
-  import TestInvokeTauri from './lib/TestInvokeTauri.svelte'
+  // import Counter from './lib/Counter.svelte'
+  // import TestInvokeTauri from './lib/TestInvokeTauri.svelte'
   import Sidebar from './lib/Sidebar.svelte'
+  import ChatWindow from './lib/ChatWindow.svelte';
   
   // manage state
   let currentChat: Chat | null = null;
@@ -15,8 +16,16 @@
   import { onMount } from 'svelte';
   import type { Model, Chat, Message } from './lib/types';
   import { invokeLLM, invokeGetChats, invokeCreateChat } from './lib/api';
-
+  import { bus } from './lib/bus';
+  
+  
   onMount(async () => {
+    // set up event handlers
+    bus.on('new-chat-created', (newChat) => {
+      chats = [newChat, ...chats];
+      currentChat = newChat;
+    });
+    
     // pull existing chats
     chats = await invokeGetChats();
 
@@ -26,7 +35,9 @@
     } else {
       // if no existing chats, create one and set that to current chat
       let newChat = await invokeCreateChat();
+      chats = [newChat, ...chats];
       currentChat = newChat;
+      // console.log(chats);
     }
   });
 
@@ -40,9 +51,10 @@
     <Sidebar chats={chats} />
   </div>
   <div class="main">
-    <div class="card">
+    <!-- <div class="card">
       <TestInvokeTauri />
-    </div>
+    </div> -->
+    <ChatWindow />
   </div>
 </main>
 
@@ -57,11 +69,11 @@
   .main {
     flex: 1;
   }
-  .card {
+  /* .card {
     padding: 2em;
     border: 1px solid #eee;
     border-radius: 8px;
     background: white;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  }
+  } */
 </style>

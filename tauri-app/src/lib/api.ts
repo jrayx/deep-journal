@@ -23,12 +23,8 @@ export const invokeLLM = () => {
 export const invokeGetModels = async () => {
     try {
         const response = await invoke<Model[]>('get_models');
-        // console.log('Full response:', response);
-        console.log("Models:");
-        console.log(response);
-
-        // const names: string[] = response.map(model => model.name);
-        // console.log('Names only:', names);
+        // console.log("Models:");
+        // console.log(response);
     } catch (error) {
         console.error('Failed to get models:', error);
     }
@@ -37,9 +33,8 @@ export const invokeGetModels = async () => {
 export const invokeGetChats = async () => {
     try {
         const response = await invoke<Chat[]>('get_chats');
-        // console.log('Full response:', response);
-        console.log("Chats:");
-        console.log(response);
+        // console.log("Chats:");
+        // console.log(response);
         return response;
     } catch (error) {
         console.error('Failed to get chats:', error);
@@ -49,9 +44,9 @@ export const invokeGetChats = async () => {
 
 export const invokeCreateChat = async () => {
     try {
-        const response = await invoke<Chat>('create_chat', { title: 'New Chat' });
-        console.log("Created Chat:");
-        console.log(response);
+        const response = await invoke<Chat>('create_chat');
+        // console.log("Created Chat:");
+        // console.log(response);
         return response;
     } catch (error) {
         console.error('Failed to create chat:', error);
