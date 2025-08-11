@@ -53,3 +53,15 @@ export const invokeCreateChat = async () => {
         return null;
     }
 }
+
+export const invokeGetMessages = async (chatId: number) => {
+    try {
+        const response = await invoke<Message[]>('get_messages_by_chat', { chat_id: chatId });
+        // console.log("Messages:");
+        // console.log(response);
+        return response;
+    } catch (error) {
+        console.error('Failed to get messages:', error);
+        return null;
+    }
+}

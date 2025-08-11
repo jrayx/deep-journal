@@ -132,7 +132,7 @@ pub fn get_messages_by_chat(chat_id: i32) -> Result<Vec<entities::Message>, Stri
     let conn = Connection::open("../../data/journal.db")
         .map_err(|e| format!("DB open error: {}", e))?;
 
-    let mut stmt = conn.prepare("SELECT id, chat_id, model_id, text FROM messages WHERE chat_id = ?")
+    let mut stmt = conn.prepare("SELECT id, chat_id, model_id, text, sender FROM messages WHERE chat_id = ?")
         .map_err(|e| format!("Prepare error: {}", e))?;
 
     let message_iter = stmt.query_map(params![chat_id], |row| {
