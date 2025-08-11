@@ -14,10 +14,15 @@ export const invokeTauriReadFile = () => {
     });
 }
 
-export const invokeLLM = () => {
-    invoke('run_llm', { model_name: 'deepseek-r1:1.5b', message: 'Hello!' }).then((response) => {
-        console.log(response);
-    });
+export const invokeLLM = async (modelName: string, message: string) => {
+    try {
+        const response = await invoke('run_llm', { model_name: modelName, message: message })
+        return response;
+    } catch (error) {
+        console.error('Failed to invoke LLM:', error);
+        return null;
+    }
+    
 }
 
 export const invokeGetModels = async () => {
@@ -64,6 +69,25 @@ export const invokeGetMessages = async (chatId: number) => {
         return response;
     } catch (error) {
         console.error('Failed to get messages:', error);
+        return null;
+    }
+}
+
+export const invokeCreateMessage = async (newMessage: Message) => {
+    try {
+        const response = await invoke<Message>('create_message',
+            {
+                chat_id: newMessage.chat_id,
+                model_id: newMessage.model_id,
+                text: newMessage.text,
+                sender: newMessage.sender
+            }
+        );
+        // console.log("Created Message:");
+        // console.log(response);
+        return response;
+    } catch (error) {
+        console.error('Failed to create message:', error);
         return null;
     }
 }

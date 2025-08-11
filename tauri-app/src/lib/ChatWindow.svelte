@@ -1,13 +1,17 @@
 <script lang="ts">
     import type { Chat, Message } from './types';
-    import { invokeGetMessages } from './api';
+    import { invokeGetMessages, invokeCreateMessage, invokeLLM } from './api';
     import { Sender } from './constants';
     
+    // inputs
     export let currentChat: Chat | null = null;
     export let models: Model[] = [];
     export let currentModel: Model | null = null;
-
+    
+    // state
+    let inputMessage: string = '';
     let messages: Message[] = [];
+    
 
     function onCurrentChatChange(chat) {
         if (!currentChat) {
@@ -16,6 +20,8 @@
         // console.log('Current chat changed:', chat);
         loadMessages();
     }
+    
+    $: onCurrentChatChange(currentChat); // trigger onCurrentChatChange to run every time currentChat changed
     
     function loadMessages() {
         console.log("Loading messages...")
@@ -28,8 +34,32 @@
             console.error('Failed to load messages:', error);
         });
     }
-
-    $: onCurrentChatChange(currentChat);
+    
+    async function sendMessage() {
+        let inputMessageObj: Message = {
+            chat_id: currentChat!.id,
+            model_id: currentModel!.id,
+            text: inputMessage,
+            sender: Sender.User
+        };
+        // console.log(inputMessageObj);
+        let newUserMessage = await invokeCreateMessage(inputMessageObj);
+        messages = [...messages, newUserMessage];
+        inputMessage = '';
+        
+        // Add system response message
+        let llmResponse = await invokeLLM(currentModel!.name, newUserMessage.text);
+        let llmResponseMsgObj = {
+            chat_id: currentChat!.id,
+            model_id: currentModel!.id,
+            text: llmResponse,
+            sender: Sender.System
+        };
+        // console.log(llmResponseMsgObj);
+        let llmMessageCreated: Message = await invokeCreateMessage(llmResponseMsgObj);
+        messages = [...messages, llmMessageCreated];
+    }
+    
 </script>
 
 <style>
@@ -61,6 +91,7 @@
   border-radius: 16px;
   font-size: 1rem;
   word-break: break-word;
+  text-align: left;
 }
 
 .message.user {
@@ -74,18 +105,60 @@
   /* background: #e0e0e0; */
   color: #fff;
 }
+
+.input-bar {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem;
+  border-top: 1px solid #eee;
+  background: #fafafa;
+}
+
+.input-bar input[type="text"] {
+  flex: 1;
+  padding: 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.input-bar button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  border: none;
+  background: #007aff;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.input-bar button:hover {
+  background: #005bb5;
+}
 </style>
 
 
 <div class="chat-window">
+    
     <select class="model-dropdown" disabled>
         {#each models as model}
             <option selected={model.id === currentModel?.id}>{model.name}</option>
         {/each}
     </select>
+    
     {#each messages as message}
-    <div class="message {message.sender === Sender.User ? 'user' : 'system'}">
-        {message.text}
-    </div>
+        <div class="message {message.sender === Sender.User ? 'user' : 'system'}">
+            {message.text}
+        </div>
     {/each}
+    
+    <div class="input-bar">
+        <input
+        type="text"
+        bind:value={inputMessage}
+        placeholder="Type your message..."
+        on:keydown={(e) => e.key === 'Enter' && sendMessage()}
+        />
+        <button on:click={sendMessage}>Send</button>
+    </div>
 </div>
