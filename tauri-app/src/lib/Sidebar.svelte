@@ -3,9 +3,11 @@
     export let chats: Chat[] = [];
     let currentChat: Chat | null = null;
     
+    
     import type { Chat } from './types';
     import { bus } from './bus';
     import { invokeCreateChat } from './api';
+    import DropdownButton from './DropdownButton.svelte';
 
     const onClickCreateNewChat = () => {
         // console.log("Create New Chat clicked");
@@ -17,6 +19,7 @@
     const onClickChat = (chat: Chat) => {
         bus.emit('chat-selected', chat);
     }
+    
     
 </script>
 
@@ -51,6 +54,13 @@
   padding: 1rem;
 }
 
+.menu-header {
+    font-weight: bold;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #333;
+    text-align: left;
+}
+
 .menu-item {
   padding: 0.75rem 1rem;
   border-radius: 6px;
@@ -61,15 +71,10 @@
 .menu-item:hover {
   background: #333;
 }
-
-
-.menu-header {
-    font-weight: bold;
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid #333;
-    text-align: left;
+.menu-item.selected {
+  background: #2a2a2a;
+  color: #fff;
 }
-
 
 </style>
 
@@ -80,10 +85,10 @@
         <button onclick={onClickCreateNewChat}>[+] Create New Chat</button>
     </div>
     <div class="menu-header">Chats</div>
-    {#each chats as chat}
-        <div class="menu-item {chat?.id === currentChat?.id ? 'selected': ''}">
-            <button onclick={() => onClickChat(chat)}>{chat.title}</button>
-            <button>...</button>
+    {#each chats as chat, i}
+        <div class="menu-item {chat?.id === currentChat?.id ? 'selected': ''}" onclick={() => onClickChat(chat)}>
+            <span>{chat.title}</span>
+            <DropdownButton icon="..." />
         </div>
     {/each}
   </nav>
