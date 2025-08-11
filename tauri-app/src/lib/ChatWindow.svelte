@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { tick } from 'svelte';
     import type { Chat, Message } from './types';
     import { invokeGetMessages, invokeCreateMessage, invokeLLM } from './api';
     import { Sender } from './constants';
@@ -11,6 +12,22 @@
     // state
     let inputMessage: string = '';
     let messages: Message[] = [];
+    let chatWindow: HTMLDivElement;
+    
+    // scroll to bottom whenever chat messages changes
+    $: if (messages) {
+        scrollToBottom();
+    }
+    
+    async function scrollToBottom() {
+        await tick();
+        if (chatWindow) {
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+    }
+    
+    // trigger onCurrentChatChange to run every time currentChat changed
+    $: onCurrentChatChange(currentChat);
     
 
     function onCurrentChatChange(chat) {
@@ -21,7 +38,7 @@
         loadMessages();
     }
     
-    $: onCurrentChatChange(currentChat); // trigger onCurrentChatChange to run every time currentChat changed
+    
     
     function loadMessages() {
         console.log("Loading messages...")
@@ -111,7 +128,6 @@
   gap: 0.5rem;
   padding: 1rem;
   border-top: 1px solid #eee;
-  background: #fafafa;
 }
 
 .input-bar input[type="text"] {
@@ -126,7 +142,7 @@
   padding: 0.75rem 1.5rem;
   border-radius: 6px;
   border: none;
-  background: #007aff;
+  background: #535bf2;
   color: #fff;
   font-weight: bold;
   cursor: pointer;
@@ -138,7 +154,7 @@
 </style>
 
 
-<div class="chat-window">
+<div bind:this={chatWindow} class="chat-window">
     
     <select class="model-dropdown" disabled>
         {#each models as model}
