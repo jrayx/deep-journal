@@ -62,7 +62,7 @@ pub fn get_chats() -> Result<Vec<entities::Chat>, String> {
     let conn = Connection::open("../../data/journal.db")
         .map_err(|e| format!("DB open error: {}", e))?;
 
-    let mut stmt = conn.prepare("SELECT id, title FROM chats")
+    let mut stmt = conn.prepare("SELECT id, title FROM chats ORDER BY id DESC")
         .map_err(|e| format!("Prepare error: {}", e))?;
 
     let model_iter = stmt.query_map([], |row| {
