@@ -2,15 +2,29 @@ use rusqlite::{params, Connection, Result};
 use std::fs;
 use std::io::Write;
 use std::process::{Command, Stdio};
+use tauri::{path::BaseDirectory, Manager};
 
 use crate::entities;
 
-const DB_PATH: &str = "../resources/journal.db";
-
+#[tauri::command]
+pub fn get_db_path(app_handle: tauri::AppHandle) -> String {
+    // let db_path = app_handle
+    //     .path_resolver()
+    //     .app_data_dir()
+    //     .map(|mut path| {
+    //         path.push("journal.db");
+    //         path.to_string_lossy().to_string()
+    //     })
+    //     .unwrap_or_else(|| "journal.db".to_string());
+    let db_path = app_handle.path().resolve("journal.db", BaseDirectory::Resource)
+        .expect("Failed to resolve database path");
+    db_path.to_string_lossy().to_string()
+}
 
 #[tauri::command(rename_all="snake_case")]
-pub fn setup_database() -> Result<(), String> {
-    let conn = Connection::open(DB_PATH)
+pub fn setup_database(app: tauri::AppHandle) -> Result<(), String> {
+    let db_path = get_db_path(app);
+    let conn = Connection::open(db_path)
         .map_err(|e| format!("DB open error: {}", e))?;
 
     // List of SQL files to run
@@ -30,10 +44,10 @@ pub fn setup_database() -> Result<(), String> {
 }
 
 #[tauri::command(rename_all="snake_case")]
-pub fn run_llm(model_name: String, chat_id: i32) -> String {
-    
+pub fn run_llm(model_name: String, chat_id: i32, app: tauri::AppHandle) -> String {
+
     // Get chat history
-    let chat_history_result = get_messages_by_chat(chat_id);
+    let chat_history_result = get_messages_by_chat(chat_id, app);
     let chat_history = match chat_history_result {
         Ok(messages) => {
             messages
@@ -104,8 +118,9 @@ pub fn run_llm(model_name: String, chat_id: i32) -> String {
 // Models
 
 #[tauri::command(rename_all = "snake_case")]
-pub fn get_models() -> Result<Vec<entities::Model>, String> {
-    let conn = Connection::open(DB_PATH)
+pub fn get_models(app: tauri::AppHandle) -> Result<Vec<entities::Model>, String> {
+    let db_path = get_db_path(app);
+    let conn = Connection::open(db_path)
         .map_err(|e| format!("DB open error: {}", e))?;
 
     let mut stmt = conn.prepare("SELECT id, name FROM models")
@@ -128,8 +143,9 @@ pub fn get_models() -> Result<Vec<entities::Model>, String> {
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub fn create_model(new_model_name: String) -> Result<entities::Model, String> {
-    let conn = Connection::open(DB_PATH)
+pub fn create_model(new_model_name: String, app: tauri::AppHandle) -> Result<entities::Model, String> {
+    let db_path = get_db_path(app);
+    let conn = Connection::open(db_path)
         .map_err(|e| format!("DB open error: {}", e))?;
 
     conn.execute("INSERT INTO models (name) VALUES (?)", params![new_model_name])
@@ -144,8 +160,9 @@ pub fn create_model(new_model_name: String) -> Result<entities::Model, String> {
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub fn delete_model(model_id: i32) -> Result<(), String> {
-    let conn = Connection::open(DB_PATH)
+pub fn delete_model(model_id: i32, app: tauri::AppHandle) -> Result<(), String> {
+    let db_path = get_db_path(app);
+    let conn = Connection::open(db_path)
         .map_err(|e| format!("DB open error: {}", e))?;
 
     conn.execute("DELETE FROM models WHERE id = ?", params![model_id])
@@ -158,8 +175,9 @@ pub fn delete_model(model_id: i32) -> Result<(), String> {
 // Chats
 
 #[tauri::command(rename_all = "snake_case")]
-pub fn get_chats() -> Result<Vec<entities::Chat>, String> {
-    let conn = Connection::open(DB_PATH)
+pub fn get_chats(app: tauri::AppHandle) -> Result<Vec<entities::Chat>, String> {
+    let db_path = get_db_path(app);
+    let conn = Connection::open(db_path)
         .map_err(|e| format!("DB open error: {}", e))?;
 
     let mut stmt = conn.prepare("SELECT id, title FROM chats ORDER BY id DESC")
@@ -182,8 +200,9 @@ pub fn get_chats() -> Result<Vec<entities::Chat>, String> {
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub fn create_chat() -> Result<entities::Chat, String> {
-    let conn = Connection::open(DB_PATH)
+pub fn create_chat(app: tauri::AppHandle) -> Result<entities::Chat, String> {
+    let db_path = get_db_path(app);
+    let conn = Connection::open(db_path)
         .map_err(|e| format!("DB open error: {}", e))?;
 
     let mut max_id = conn.query_row("SELECT MAX(id) FROM chats", [], |row| {
@@ -204,8 +223,9 @@ pub fn create_chat() -> Result<entities::Chat, String> {
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub fn update_chat_title(chat_id: i32, new_title: String) -> Result<(), String> {
-    let conn = Connection::open(DB_PATH)
+pub fn update_chat_title(chat_id: i32, new_title: String, app: tauri::AppHandle) -> Result<(), String> {
+    let db_path = get_db_path(app);
+    let conn = Connection::open(db_path)
         .map_err(|e| format!("DB open error: {}", e))?;
 
     conn.execute("UPDATE chats SET title = ? WHERE id = ?", params![new_title, chat_id])
@@ -214,8 +234,9 @@ pub fn update_chat_title(chat_id: i32, new_title: String) -> Result<(), String> 
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub fn delete_chat(chat_id: i32) -> Result<(), String> {
-    let conn = Connection::open(DB_PATH)
+pub fn delete_chat(chat_id: i32, app: tauri::AppHandle) -> Result<(), String> {
+    let db_path = get_db_path(app);
+    let conn = Connection::open(db_path)
         .map_err(|e| format!("DB open error: {}", e))?;
 
     conn.execute("DELETE FROM chats WHERE id = ?", params![chat_id])
@@ -227,8 +248,10 @@ pub fn delete_chat(chat_id: i32) -> Result<(), String> {
 // Messages
 
 #[tauri::command(rename_all = "snake_case")]
-pub fn get_messages_by_chat(chat_id: i32) -> Result<Vec<entities::Message>, String> {
-    let conn = Connection::open(DB_PATH)
+pub fn get_messages_by_chat(chat_id: i32, app: tauri::AppHandle) -> Result<Vec<entities::Message>, String> {
+
+    let db_path = get_db_path(app);
+    let conn = Connection::open(db_path)
         .map_err(|e| format!("DB open error: {}", e))?;
 
     let mut stmt = conn.prepare("SELECT id, chat_id, model_id, text, sender FROM messages WHERE chat_id = ?")
@@ -254,8 +277,10 @@ pub fn get_messages_by_chat(chat_id: i32) -> Result<Vec<entities::Message>, Stri
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub fn create_message(chat_id: i32, model_id: i32, text: String, sender: i32) -> Result<entities::Message, String> {
-    let conn = Connection::open(DB_PATH)
+pub fn create_message(chat_id: i32, model_id: i32, text: String, sender: i32, app: tauri::AppHandle) -> Result<entities::Message, String> {
+
+    let db_path = get_db_path(app);
+    let conn = Connection::open(db_path)
         .map_err(|e| format!("DB open error: {}", e))?;
 
     conn.execute("INSERT INTO messages (chat_id, model_id, text, sender) VALUES (?, ?, ?, ?)",
