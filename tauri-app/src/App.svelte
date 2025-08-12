@@ -73,7 +73,6 @@
     // pull existing chats
     chats = await invokeGetChats();
     setCurrentChatMostRecentOrCreateNew();
-    
   });
   
 </script>

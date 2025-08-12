@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { tick } from 'svelte';
+    import { onMount, tick } from 'svelte';
     import type { Chat, Message } from './types';
     import { invokeGetMessages, invokeCreateMessage, invokeLLM } from './api';
     import { Sender } from './constants';
@@ -16,6 +16,11 @@
     let sending = false;
 
     const modelThinkingDelimiter = "...done thinking.";
+    
+    onMount(async () => {
+      await tick();
+      scrollToBottom();
+    });
 
     // scroll to bottom whenever chat messages changes
     $: if (messages) {

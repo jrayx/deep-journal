@@ -72,4 +72,3 @@ npm run build
 npm run tauri build
 ```
 On Windows, path to built program is: "tauri-app\src-tauri\target\release\app.exe"
-

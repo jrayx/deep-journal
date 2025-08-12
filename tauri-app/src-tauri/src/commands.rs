@@ -1,40 +1,22 @@
+use rusqlite::{params, Connection, Result};
 use std::fs;
 use std::io::Write;
 use std::process::{Command, Stdio};
-use rusqlite::{params, Connection, Result};
+
 use crate::entities;
-// use tauri::ipc::Response;
-// use crate::error_handler;
 
-// rename_all=snake_case forces attribute names in JavaScript to match Rust,
-// otherwise will convert attribute names from snake_case to camelCase.
-// I chose to use snake_case option to align between frontend and backend
-// to reduce confusion.
+const DB_PATH: &str = "../resources/journal.db";
 
-// #[tauri::command(rename_all="snake_case")]
-// pub fn hello_world(invoke_message: String) -> String {
-//     println!("I was invoked from JavaScript, with this message: {}", invoke_message);
-//     return "Hello from Rust!".into();
-// }
-
-// #[tauri::command(rename_all="snake_case")]
-// pub fn read_file() -> String {
-//     let data = std::fs::read("../public/data/test_file.txt");
-//     match data {
-//         Ok(bytes) => String::from_utf8_lossy(&bytes).to_string(),
-//         Err(e) => format!("Failed to read file: {}", e),
-//     }
-// }
 
 #[tauri::command(rename_all="snake_case")]
 pub fn setup_database() -> Result<(), String> {
-    let conn = Connection::open("../public/data/journal.db")
+    let conn = Connection::open(DB_PATH)
         .map_err(|e| format!("DB open error: {}", e))?;
 
     // List of SQL files to run
     let sql_files = [
-        "../public/data/queries/1_create_db.sql",
-        "../public/data/queries/2_fill_data.sql",
+        "../resources/queries/1_create_db.sql",
+        "../resources/queries/2_fill_data.sql",
     ];
 
     for file in &sql_files {
@@ -123,7 +105,7 @@ pub fn run_llm(model_name: String, chat_id: i32) -> String {
 
 #[tauri::command(rename_all = "snake_case")]
 pub fn get_models() -> Result<Vec<entities::Model>, String> {
-    let conn = Connection::open("../public/data/journal.db")
+    let conn = Connection::open(DB_PATH)
         .map_err(|e| format!("DB open error: {}", e))?;
 
     let mut stmt = conn.prepare("SELECT id, name FROM models")
@@ -147,7 +129,7 @@ pub fn get_models() -> Result<Vec<entities::Model>, String> {
 
 #[tauri::command(rename_all = "snake_case")]
 pub fn create_model(new_model_name: String) -> Result<entities::Model, String> {
-    let conn = Connection::open("../public/data/journal.db")
+    let conn = Connection::open(DB_PATH)
         .map_err(|e| format!("DB open error: {}", e))?;
 
     conn.execute("INSERT INTO models (name) VALUES (?)", params![new_model_name])
@@ -163,7 +145,7 @@ pub fn create_model(new_model_name: String) -> Result<entities::Model, String> {
 
 #[tauri::command(rename_all = "snake_case")]
 pub fn delete_model(model_id: i32) -> Result<(), String> {
-    let conn = Connection::open("../public/data/journal.db")
+    let conn = Connection::open(DB_PATH)
         .map_err(|e| format!("DB open error: {}", e))?;
 
     conn.execute("DELETE FROM models WHERE id = ?", params![model_id])
@@ -177,7 +159,7 @@ pub fn delete_model(model_id: i32) -> Result<(), String> {
 
 #[tauri::command(rename_all = "snake_case")]
 pub fn get_chats() -> Result<Vec<entities::Chat>, String> {
-    let conn = Connection::open("../public/data/journal.db")
+    let conn = Connection::open(DB_PATH)
         .map_err(|e| format!("DB open error: {}", e))?;
 
     let mut stmt = conn.prepare("SELECT id, title FROM chats ORDER BY id DESC")
@@ -201,7 +183,7 @@ pub fn get_chats() -> Result<Vec<entities::Chat>, String> {
 
 #[tauri::command(rename_all = "snake_case")]
 pub fn create_chat() -> Result<entities::Chat, String> {
-    let conn = Connection::open("../public/data/journal.db")
+    let conn = Connection::open(DB_PATH)
         .map_err(|e| format!("DB open error: {}", e))?;
 
     let mut max_id = conn.query_row("SELECT MAX(id) FROM chats", [], |row| {
@@ -223,7 +205,7 @@ pub fn create_chat() -> Result<entities::Chat, String> {
 
 #[tauri::command(rename_all = "snake_case")]
 pub fn update_chat_title(chat_id: i32, new_title: String) -> Result<(), String> {
-    let conn = Connection::open("../public/data/journal.db")
+    let conn = Connection::open(DB_PATH)
         .map_err(|e| format!("DB open error: {}", e))?;
 
     conn.execute("UPDATE chats SET title = ? WHERE id = ?", params![new_title, chat_id])
@@ -233,7 +215,7 @@ pub fn update_chat_title(chat_id: i32, new_title: String) -> Result<(), String> 
 
 #[tauri::command(rename_all = "snake_case")]
 pub fn delete_chat(chat_id: i32) -> Result<(), String> {
-    let conn = Connection::open("../public/data/journal.db")
+    let conn = Connection::open(DB_PATH)
         .map_err(|e| format!("DB open error: {}", e))?;
 
     conn.execute("DELETE FROM chats WHERE id = ?", params![chat_id])
@@ -246,7 +228,7 @@ pub fn delete_chat(chat_id: i32) -> Result<(), String> {
 
 #[tauri::command(rename_all = "snake_case")]
 pub fn get_messages_by_chat(chat_id: i32) -> Result<Vec<entities::Message>, String> {
-    let conn = Connection::open("../public/data/journal.db")
+    let conn = Connection::open(DB_PATH)
         .map_err(|e| format!("DB open error: {}", e))?;
 
     let mut stmt = conn.prepare("SELECT id, chat_id, model_id, text, sender FROM messages WHERE chat_id = ?")
@@ -273,7 +255,7 @@ pub fn get_messages_by_chat(chat_id: i32) -> Result<Vec<entities::Message>, Stri
 
 #[tauri::command(rename_all = "snake_case")]
 pub fn create_message(chat_id: i32, model_id: i32, text: String, sender: i32) -> Result<entities::Message, String> {
-    let conn = Connection::open("../public/data/journal.db")
+    let conn = Connection::open(DB_PATH)
         .map_err(|e| format!("DB open error: {}", e))?;
 
     conn.execute("INSERT INTO messages (chat_id, model_id, text, sender) VALUES (?, ?, ?, ?)",
@@ -290,3 +272,26 @@ pub fn create_message(chat_id: i32, model_id: i32, text: String, sender: i32) ->
         sender
     })
 }
+
+// rename_all=snake_case forces attribute names in JavaScript to match Rust,
+// otherwise will convert attribute names from snake_case to camelCase.
+// I chose to use snake_case option to align between frontend and backend
+// to reduce confusion.
+
+// use tauri::ipc::Response;
+// use crate::error_handler;
+
+// #[tauri::command(rename_all="snake_case")]
+// pub fn hello_world(invoke_message: String) -> String {
+//     println!("I was invoked from JavaScript, with this message: {}", invoke_message);
+//     return "Hello from Rust!".into();
+// }
+
+// #[tauri::command(rename_all="snake_case")]
+// pub fn read_file() -> String {
+//     let data = std::fs::read("../resources/test_file.txt");
+//     match data {
+//         Ok(bytes) => String::from_utf8_lossy(&bytes).to_string(),
+//         Err(e) => format!("Failed to read file: {}", e),
+//     }
+// }

@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "identifier": "com.deep-journal.dev",
   "build": {
-    "frontendDist": "../public",
+    "frontendDist": "../dist",
     "devUrl": "http://localhost:5173",
     "beforeDevCommand": "npm run dev",
     "beforeBuildCommand": "npm run build"
@@ -35,6 +35,7 @@
       "icons/icon.ico"
     ],
     "resources": [
+      "../resources/**/*"
     ]
   }
 }
