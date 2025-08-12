@@ -113,6 +113,13 @@
   width: 100%;
 }
 
+.messages-container {
+  display: flex;
+  flex: 1;
+  overflow-y: auto;
+  flex-direction: column;
+}
+
 .model-dropdown {
   position: absolute;
   top: 1rem;
@@ -201,23 +208,24 @@
         {/each}
     </select>
     
-    {#each messages as message}
-        <div class="message {message.sender === Sender.User ? 'user' : 'system'}">
-        {#if message.sender === Sender.User}
-            
-                {message.text}
-        {:else}
-            <p class="thinking">{getThinkingFromMessageText(message.text)}</p>
-            <p>{getAnswerFromMessageText(message.text)}</p>
-        {/if}
-        </div>
-    {/each}
-    
-    {#if sending}
-        <div class="spinner"></div>
-    {/if}
+    <div class="messages-container">
+      {#each messages as message}
+          <div class="message {message.sender === Sender.User ? 'user' : 'system'}">
+          {#if message.sender === Sender.User}
+              
+                  {message.text}
+          {:else}
+              <p class="thinking">{getThinkingFromMessageText(message.text)}</p>
+              <p>{getAnswerFromMessageText(message.text)}</p>
+          {/if}
+          </div>
+      {/each}
+    </div>
     
     <div class="input-bar">
+        {#if sending}
+          <div class="spinner"></div>
+        {/if}
         <input
         type="text"
         bind:value={inputMessage}

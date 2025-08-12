@@ -63,3 +63,13 @@ cd tauri-app
 npm run tauri dev
 ```
 (Open WebView console on app window with ctrl+shift+I to view Svelte console.log() output.)
+
+## Building for Release
+See `tauri-app/src-tauri/tauri.conf.json` for build configurations.
+```
+cd tauri-app
+npm run build
+npm run tauri build
+```
+On Windows, path to built program is: "tauri-app\src-tauri\target\release\app.exe"
+
