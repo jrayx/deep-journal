@@ -80,9 +80,9 @@
   {#if open}
     <div class="dropdown-list">
       {#each options as opt}
-        <div class="dropdown-item" onclick={() => handleOption(opt.action)}>
+        <button type="button" class="dropdown-item" onclick={() => handleOption(opt.action)}>
           {opt.label}
-        </div>
+        </button>
       {/each}
     </div>
   {/if}

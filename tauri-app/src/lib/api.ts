@@ -2,21 +2,10 @@ import type { Model, Chat, Message } from './types';
 import { Sender } from './constants';
 import { invoke } from '@tauri-apps/api/core';
 
-export const invokeTauriHelloWorld = () => {
-    invoke('hello_world', { invoke_message: 'Hello!' }).then((response) => {
-        console.log(response);
-    });
-}
 
-export const invokeTauriReadFile = () => {
-    invoke('read_file').then((response) => {
-        console.log(response);
-    });
-}
-
-export const invokeLLM = async (modelName: string, message: string) => {
+export const invokeLLM = async (modelName: string, chatId: number) => {
     try {
-        const response = await invoke('run_llm', { model_name: modelName, message: message })
+        const response = await invoke('run_llm', { model_name: modelName, chat_id: chatId })
         return response;
     } catch (error) {
         console.error('Failed to invoke LLM:', error);

@@ -1,5 +1,4 @@
 pub mod commands;
-pub mod db;
 pub mod entities;
 // pub mod error_handler;
 
@@ -23,19 +22,18 @@ pub fn run() {
     
     // attach custom commands
     .invoke_handler(tauri::generate_handler![
-        commands::hello_world,
-        commands::read_file,
+        // commands::hello_world,
+        // commands::read_file,
         commands::run_llm,
-        
-        db::get_models,
-        db::create_model,
-        db::delete_model,
-        db::get_chats,
-        db::create_chat,
-        db::update_chat_title,
-        db::delete_chat,
-        db::get_messages_by_chat,
-        db::create_message,
+        commands::get_models,
+        commands::create_model,
+        commands::delete_model,
+        commands::get_chats,
+        commands::create_chat,
+        commands::update_chat_title,
+        commands::delete_chat,
+        commands::get_messages_by_chat,
+        commands::create_message,
     ])
     
     // run Tauri app

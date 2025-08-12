@@ -65,7 +65,7 @@
         inputMessage = '';
         
         // Add system response message
-        let llmResponse = await invokeLLM(currentModel!.name, newUserMessage.text);
+        let llmResponse = await invokeLLM(currentModel!.name, currentChat?.id);
         let llmResponseMsgObj = {
             chat_id: currentChat!.id,
             model_id: currentModel!.id,

@@ -12,7 +12,7 @@ pub struct Chat {
     pub title: String,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Message {
     pub id: i32,
     pub chat_id: i32,
