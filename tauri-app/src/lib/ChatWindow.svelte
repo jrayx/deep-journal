@@ -52,6 +52,14 @@
         });
     }
     
+    function getThinkingFromMessageText(messageText) {
+        return messageText.split("**Answer:**")[0];
+    }
+    
+    function getAnswerFromMessageText(messageText) {
+        return messageText.split("**Answer:**")[1];
+    }
+    
     async function sendMessage() {
         let inputMessageObj: Message = {
             chat_id: currentChat!.id,
@@ -151,6 +159,11 @@
 .input-bar button:hover {
   background: #005bb5;
 }
+
+.thinking {
+  color: #888;
+  font-style: italic;
+}
 </style>
 
 
@@ -165,7 +178,13 @@
     
     {#each messages as message}
         <div class="message {message.sender === Sender.User ? 'user' : 'system'}">
-            {message.text}
+        {#if message.sender === Sender.User}
+            
+                {message.text}
+        {:else}
+            <p class="thinking">{getThinkingFromMessageText(message.text)}</p>
+            <p>{getAnswerFromMessageText(message.text)}</p>
+        {/if}
         </div>
     {/each}
     
