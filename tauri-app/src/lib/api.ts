@@ -3,6 +3,16 @@ import { Sender } from './constants';
 import { invoke } from '@tauri-apps/api/core';
 
 
+export const invokeSetupDb = async () => {
+    try {
+        const response = await invoke('setup_database');
+        return response;
+    } catch (error) {
+        console.error('Failed to invoke setup_database:', error);
+        return null;
+    }
+};
+
 export const invokeLLM = async (modelName: string, chatId: number) => {
     try {
         const response = await invoke('run_llm', { model_name: modelName, chat_id: chatId })

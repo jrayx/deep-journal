@@ -1,1 +1,0 @@
-Super secret contents of test_file.txt!

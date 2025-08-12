@@ -1,3 +1,4 @@
+use std::fs;
 use std::io::Write;
 use std::process::{Command, Stdio};
 use rusqlite::{params, Connection, Result};
@@ -24,6 +25,27 @@ use crate::entities;
 //         Err(e) => format!("Failed to read file: {}", e),
 //     }
 // }
+
+#[tauri::command(rename_all="snake_case")]
+pub fn setup_database() -> Result<(), String> {
+    let conn = Connection::open("../../data/journal.db")
+        .map_err(|e| format!("DB open error: {}", e))?;
+
+    // List of SQL files to run
+    let sql_files = [
+        "../../data/queries/1_create_db.sql",
+        "../../data/queries/2_fill_data.sql",
+    ];
+
+    for file in &sql_files {
+        let sql = fs::read_to_string(file)
+            .map_err(|e| format!("Failed to read {}: {}", file, e))?;
+        conn.execute_batch(&sql)
+            .map_err(|e| format!("Failed to execute {}: {}", file, e))?;
+    }
+
+    Ok(())
+}
 
 #[tauri::command(rename_all="snake_case")]
 pub fn run_llm(model_name: String, chat_id: i32) -> String {

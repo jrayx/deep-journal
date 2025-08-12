@@ -14,7 +14,9 @@
     let messages: Message[] = [];
     let chatWindow: HTMLDivElement;
     let sending = false;
-    
+
+    const modelThinkingDelimiter = "...done thinking.";
+
     // scroll to bottom whenever chat messages changes
     $: if (messages) {
         scrollToBottom();
@@ -54,11 +56,17 @@
     }
     
     function getThinkingFromMessageText(messageText) {
-        return messageText.split("...done thinking.")[0];
+      if (!messageText.includes(modelThinkingDelimiter)) {
+        return ''
+      }
+      return messageText.split(modelThinkingDelimiter)[0];
     }
     
     function getAnswerFromMessageText(messageText) {
-        return messageText.split("...done thinking.")[1];
+      if (!messageText.includes(modelThinkingDelimiter)) {
+        return messageText;
+      }
+      return messageText.split(modelThinkingDelimiter)[1];
     }
     
     async function sendMessage() {

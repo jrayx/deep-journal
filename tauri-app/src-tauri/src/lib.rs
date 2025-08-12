@@ -24,6 +24,7 @@ pub fn run() {
     .invoke_handler(tauri::generate_handler![
         // commands::hello_world,
         // commands::read_file,
+        commands::setup_database,
         commands::run_llm,
         commands::get_models,
         commands::create_model,

@@ -2,7 +2,7 @@
   import { invoke } from '@tauri-apps/api/core';
   import type { Model, Chat, Message } from './lib/types';
   import { onMount } from 'svelte';
-  import { invokeGetModels, invokeGetChats, invokeCreateChat, invokeLLM } from './lib/api';
+  import { invokeGetModels, invokeGetChats, invokeCreateChat, invokeLLM, invokeSetupDb } from './lib/api';
   import { bus } from './lib/bus';
   
   // Import app components
@@ -31,6 +31,9 @@
   }
   
   onMount(async () => {
+    // connect to and setup database
+    await invokeSetupDb();
+
     // set up event handlers
     bus.on('new-chat-created', (newChat) => {
       chats = [newChat, ...chats];
