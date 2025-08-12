@@ -13,6 +13,7 @@
     let inputMessage: string = '';
     let messages: Message[] = [];
     let chatWindow: HTMLDivElement;
+    let sending = false;
     
     // scroll to bottom whenever chat messages changes
     $: if (messages) {
@@ -53,14 +54,15 @@
     }
     
     function getThinkingFromMessageText(messageText) {
-        return messageText.split("**Answer:**")[0];
+        return messageText.split("...done thinking.")[0];
     }
     
     function getAnswerFromMessageText(messageText) {
-        return messageText.split("**Answer:**")[1];
+        return messageText.split("...done thinking.")[1];
     }
     
     async function sendMessage() {
+        sending = true;
         let inputMessageObj: Message = {
             chat_id: currentChat!.id,
             model_id: currentModel!.id,
@@ -83,6 +85,7 @@
         // console.log(llmResponseMsgObj);
         let llmMessageCreated: Message = await invokeCreateMessage(llmResponseMsgObj);
         messages = [...messages, llmMessageCreated];
+        sending = false;
     }
     
 </script>
@@ -164,6 +167,20 @@
   color: #888;
   font-style: italic;
 }
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #eee;
+  border-top: 2px solid #222;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto;
+  background: transparent;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 </style>
 
 
@@ -187,6 +204,10 @@
         {/if}
         </div>
     {/each}
+    
+    {#if sending}
+        <div class="spinner"></div>
+    {/if}
     
     <div class="input-bar">
         <input
