@@ -2,7 +2,7 @@
 Like to use LLMs, but don't want to give your chat data up to third parties? Use this. Everything runs on your machine and stores your chat data to a local SQLite database file (`journal.db`).
 
 Technologies:
-- LLM Model: deepseek-r1:1.5b (see Future section for more)
+- LLM Model: Ollama running deepseek-r1:1.5b (see Future section for more)
 - Frontend: Svelte/TypeScript + Tauri
 - Backend: Rust + Tauri
 - Database: SQLite
