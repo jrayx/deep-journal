@@ -1,12 +1,15 @@
+pub mod commands;
+pub mod entities;
+// pub mod error_handler;
 
-#[tauri::command]
-fn my_custom_command() {
-  println!("I was invoked from JavaScript!");
-}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+  
+  // build Tauri app
   tauri::Builder::default()
+    
+    // set up Tauri app builder
     .setup(|app| {
       if cfg!(debug_assertions) {
         app.handle().plugin(
@@ -17,7 +20,26 @@ pub fn run() {
       }
       Ok(())
     })
-    .invoke_handler(tauri::generate_handler![my_custom_command])
+    
+    // attach custom commands
+    .invoke_handler(tauri::generate_handler![
+        // commands::hello_world,
+        // commands::read_file,
+        commands::get_db_path,
+        commands::setup_database,
+        commands::run_llm,
+        commands::get_models,
+        commands::create_model,
+        commands::delete_model,
+        commands::get_chats,
+        commands::create_chat,
+        commands::update_chat_title,
+        commands::delete_chat,
+        commands::get_messages_by_chat,
+        commands::create_message,
+    ])
+    
+    // run Tauri app
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }

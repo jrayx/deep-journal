@@ -1,0 +1,73 @@
+<script lang="ts">
+    import type { Model, Chat, Message } from './types';
+    import { Sender } from './constants';
+    // console.log(Sender.System, Sender.User);
+    
+    // When using the Tauri global script (if not using the npm package)
+    // Be sure to set `app.withGlobalTauri` in `tauri.conf.json` to true
+    const invoke = window.__TAURI__.core.invoke;
+    
+    const invokeTauriHelloWorld = () => {
+        invoke('hello_world', { invoke_message: 'Hello!' }).then((response: String) => {
+            console.log(response);
+        });
+    }
+    
+    const invokeTauriReadFile = () => {
+        invoke('read_file').then((response: String) => {
+            console.log(response);
+        });
+    }
+    
+    // const invokeTauriReadFile = () => {
+    //     invoke('read_file').then((response: String) => {
+    //         const text = new TextDecoder("utf-8").decode(response);
+    //         console.log(text);
+    //     });
+    // }
+    
+    // // example error handling
+    // const invokeLogin = () => {
+    //     invoke('login', { user: 'tauri', password: '0j4rijw8=' })
+    //     .then((message) => console.log(message))
+    //     .catch((error) => console.error(error));
+    // }
+    
+    const invokeLLM = () => {
+        invoke('run_llm', { model_name: 'deepseek-r1:1.5b', message: 'Hello!' }).then((response: String) => {
+            console.log(response);
+        });
+    }
+    
+    const invokeGetModels = async () => {
+        try {
+            const response = await invoke<Model[]>('get_models');
+            // console.log('Full response:', response);
+            console.log("Models:");
+            console.log(response);
+
+            // const names: string[] = response.map(model => model.name);
+            // console.log('Names only:', names);
+        } catch (error) {
+            console.error('Failed to get models:', error);
+        }
+    };
+    
+    
+</script>
+
+<button onclick={invokeTauriHelloWorld}>
+  Invoke Hello World Tauri Command
+</button>
+
+<button onclick={invokeTauriReadFile}>
+  Invoke Read File Tauri Command
+</button>
+
+<button onclick={invokeLLM}>
+  Invoke Run LLM Tauri Command
+</button>
+
+<button onclick={invokeGetModels}>
+  Invoke Get Models Tauri Command
+</button>

@@ -1,47 +1,114 @@
 <script lang="ts">
-  import svelteLogo from './assets/svelte.svg'
-  import viteLogo from '/vite.svg'
-  import Counter from './lib/Counter.svelte'
+  import { invoke } from '@tauri-apps/api/core';
+  import type { Model, Chat, Message } from './lib/types';
+  import { onMount } from 'svelte';
+  import { invokeGetModels, invokeGetChats, invokeCreateChat, invokeLLM, invokeSetupDb } from './lib/api';
+  import { bus } from './lib/bus';
+  
+  // Import app components
+  // import Counter from './lib/Counter.svelte'
+  // import TestInvokeTauri from './lib/TestInvokeTauri.svelte'
+  import Sidebar from './lib/Sidebar.svelte'
+  import ChatWindow from './lib/ChatWindow.svelte';
+  
+  // manage state
+  let currentChat: Chat | null = null;
+  let chats: Chat[] = [];
+  let currentModel: Model | null = null;
+  let models: Model[] = [];
+  
+  async function setCurrentChatMostRecentOrCreateNew() {
+    // if existing chats, set current chat to most recent chat
+    if (chats.length > 0) {
+      currentChat = chats[0];
+    } else {
+      // if no existing chats, create one and set that to current chat
+      let newChat = await invokeCreateChat();
+      chats = [newChat, ...chats];
+      currentChat = newChat;
+      // console.log(chats);
+    }
+  }
+  
+  onMount(async () => {
+    // connect to and setup database
+    await invokeSetupDb();
+
+    // set up event handlers
+    bus.on('new-chat-created', (newChat) => {
+      chats = [newChat, ...chats];
+      currentChat = newChat;
+    });
+    
+    bus.on('chat-selected', (chatSelected) => {
+      currentChat = chatSelected;
+    });
+    
+    bus.on('chat-deleted', (chatIdDeleted) => {
+      let newChats = chats.filter(chat => chat.id !== chatIdDeleted.chatId);
+      chats = [...newChats];
+      if (currentChat?.id === chatIdDeleted.chatId) {
+        setCurrentChatMostRecentOrCreateNew();
+      }
+    });
+    
+    bus.on('chat-renamed', ({ chatId, newTitle }) => {
+      let chat = chats.find(chat => chat.id === chatId);
+      let updatedChat = { ...chat, title: newTitle };
+      // update chats list
+      let newChats = chats.map(chat =>
+        chat.id === updatedChat.id ? updatedChat : chat
+      );
+      chats = [...newChats];
+      // update currentChat
+      if (currentChat && currentChat.id === updatedChat.id) {
+        currentChat = updatedChat;
+      }
+    });
+    
+    // pull existing models and set default to first model
+    models = await invokeGetModels();
+    currentModel = models[0];
+
+    // pull existing chats
+    chats = await invokeGetChats();
+    setCurrentChatMostRecentOrCreateNew();
+  });
+  
 </script>
 
-<main>
-  <div>
-    <a href="https://vite.dev" target="_blank" rel="noreferrer">
-      <img src={viteLogo} class="logo" alt="Vite Logo" />
-    </a>
-    <a href="https://svelte.dev" target="_blank" rel="noreferrer">
-      <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
-    </a>
+
+<main class="layout">
+  <div class="sidebar">
+    <Sidebar currentChat={currentChat} chats={chats} />
   </div>
-  <h1>Vite + Svelte</h1>
-
-  <div class="card">
-    <Counter />
+  <div class="main">
+    <!-- <div class="card">
+      <TestInvokeTauri />
+    </div> -->
+    <ChatWindow currentChat={currentChat} models={models} currentModel={currentModel} />
   </div>
-
-  <p>
-    Check out <a href="https://github.com/sveltejs/kit#readme" target="_blank" rel="noreferrer">SvelteKit</a>, the official Svelte app framework powered by Vite!
-  </p>
-
-  <p class="read-the-docs">
-    Click on the Vite and Svelte logos to learn more
-  </p>
 </main>
 
 <style>
-  .logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
+  .layout {
+  display: flex;
+  height: 100vh;
   }
-  .logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
+  .sidebar {
+    width: 220px;
   }
-  .logo.svelte:hover {
-    filter: drop-shadow(0 0 2em #ff3e00aa);
+  .main {
+    flex: 1;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
   }
-  .read-the-docs {
-    color: #888;
-  }
+  /* .card {
+    padding: 2em;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  } */
 </style>

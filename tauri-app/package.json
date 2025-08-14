@@ -18,5 +18,8 @@
     "svelte-check": "^4.3.1",
     "typescript": "~5.8.3",
     "vite": "^7.1.0"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2.7.0"
   }
 }

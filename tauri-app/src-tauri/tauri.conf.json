@@ -2,17 +2,18 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "tauri-app",
   "version": "0.1.0",
-  "identifier": "com.tauri.dev",
+  "identifier": "com.deep-journal.dev",
   "build": {
-    "frontendDist": "../public",
+    "frontendDist": "../dist",
     "devUrl": "http://localhost:5173",
     "beforeDevCommand": "npm run dev",
     "beforeBuildCommand": "npm run build"
   },
   "app": {
+    "withGlobalTauri": true,
     "windows": [
       {
-        "title": "tauri-app",
+        "title": "deep-journal",
         "width": 800,
         "height": 600,
         "resizable": true,
@@ -32,6 +33,10 @@
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
+    ],
+    "resources": {
+      "../resources/*": "resources/",
+      "../resources/queries/*": "resources/queries"
+    }
   }
 }
