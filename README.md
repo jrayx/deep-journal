@@ -12,7 +12,7 @@ Click this image to go to a YouTube video demo of the app:
   
 ## Installation
 1. [Download and install Ollama CLI](https://ollama.com/download). (This is what runs the DeepSeek model.)
-2. Go to GitHub Releases page and run the `deep-journal` installer.
+2. Go to GitHub Releases page and run the `deep-journal` installer as administrator.
 3. Optional: install [DB Browser for SQLite](https://sqlitebrowser.org/) to browse/query/export chat data in your `journal.db` file.
 
 ## Model Setup
@@ -111,7 +111,7 @@ npm run build
 npm run tauri build
 ```
 
-On Windows, the path to built program is: "tauri-app\src-tauri\target\release\app.exe"
+On Windows, the path to built program is: "tauri-app\src-tauri\target\release\app.exe", and the installer is in "tauri-app\src-tauri\target\release\bundle\msi".
 
 ## Future
 The app can easily be modified to select more model options from dropdown menu, as there is a built in `models` table. The backend is pulling from this `models` table and selecting the first one. For now, the `models` table only has the mentioned DeepSeek model, and the model dropdown on the top right of the UI is a grayed out (unselectable) dropdown.
