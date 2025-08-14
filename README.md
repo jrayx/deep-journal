@@ -7,6 +7,8 @@ Technologies:
 - Backend: Rust + Tauri
 - Database: SQLite
 
+Click this image to go to a YouTube video demo of the app:
+[![deep-journal video demo](docs/video-thumbnail.png)](https://youtu.be/JDIWQQrEVKE)
   
 ## Installation
 1. [Download and install Ollama CLI](https://ollama.com/download). (This is what runs the DeepSeek model.)
@@ -21,6 +23,16 @@ ollama run deepseek-r1:1.5b
 ```
 
 ## Features
+### Data Privacy
+Your chat history and the processing of the chat is all self-contained on your machine.
+
+### Chat History and Management
+Create chats and give them custom names. Each chat preserves the context of that chat (the chat history will be passed to Ollama so that it remembers your previous messages when thinking of a response for your next message).
+
+<img src="docs/chat-options.png"></img>
+
+### Persistent Storage
+All data is stored to local SQLite `journal.db` file, so when you close the app and open it up later, all your data will be preserved and loaded from the `journal.db` file.
 
 ## Architecture
 ```mermaid
@@ -34,7 +46,7 @@ flowchart
   llm@{shape: rect, label: "LLM Model<br/>(e.g. DeepSeek model)"}
   
   user -->|uses| ui
-  ui -->|calls commands| api -->|Saves/loads data| db
+  ui -->|calls commands| api -->|saves/loads data to/from| db
   api -->|feeds/retrieves text input to/from subprocess| ollama
   ollama -->|runs| llm
 ```

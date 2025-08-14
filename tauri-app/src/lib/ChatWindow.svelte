@@ -114,13 +114,13 @@
   gap: 0.5rem;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   flex: 1;
-  height: 100%;
+  height: 95%;
   width: 100%;
 }
 
 .messages-container {
   display: flex;
-  flex: 1;
+  flex: 1 1 auto;
   overflow-y: auto;
   flex-direction: column;
 }
@@ -159,6 +159,7 @@
   gap: 0.5rem;
   padding: 1rem;
   /* border-top: 1px solid #eee; */
+  align-items: center;
 }
 
 .input-bar input[type="text"] {
