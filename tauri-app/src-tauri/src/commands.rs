@@ -6,35 +6,35 @@ use tauri::{path::BaseDirectory, Manager};
 
 use crate::entities;
 
+
+
+
 #[tauri::command]
 pub fn get_db_path(app_handle: tauri::AppHandle) -> String {
-    // let db_path = app_handle
-    //     .path_resolver()
-    //     .app_data_dir()
-    //     .map(|mut path| {
-    //         path.push("journal.db");
-    //         path.to_string_lossy().to_string()
-    //     })
-    //     .unwrap_or_else(|| "journal.db".to_string());
-    let db_path = app_handle.path().resolve("journal.db", BaseDirectory::Resource)
+    let db_path = app_handle.path().resolve("resources/journal.db", BaseDirectory::Resource)
         .expect("Failed to resolve database path");
+    // println!("Database path: {}", db_path.to_string_lossy());
     db_path.to_string_lossy().to_string()
 }
 
 #[tauri::command(rename_all="snake_case")]
 pub fn setup_database(app: tauri::AppHandle) -> Result<(), String> {
-    let db_path = get_db_path(app);
+    let db_path = get_db_path(app.clone());
     let conn = Connection::open(db_path)
         .map_err(|e| format!("DB open error: {}", e))?;
 
     // List of SQL files to run
+    let mut queries_path = app.path().resolve("resources/queries", BaseDirectory::Resource)
+        .expect("Failed to resolve queries path");
+    // println!("Queries path: {}", queries_path.to_string_lossy());
+    queries_path = queries_path.to_string_lossy().to_string().into();
     let sql_files = [
-        "../resources/queries/1_create_db.sql",
-        "../resources/queries/2_fill_data.sql",
+        "1_create_db.sql",
+        "2_fill_data.sql",
     ];
 
     for file in &sql_files {
-        let sql = fs::read_to_string(file)
+        let sql = fs::read_to_string(queries_path.join(file))
             .map_err(|e| format!("Failed to read {}: {}", file, e))?;
         conn.execute_batch(&sql)
             .map_err(|e| format!("Failed to execute {}: {}", file, e))?;
