@@ -1,5 +1,5 @@
 # deep-journal
-Like to use LLMs, but don't want to give your chat data up? Use this. Everything runs on your machine and stores your chat data to a local SQLite database file (data/journal.db). Installable via a lightweight installer.
+Like to use LLMs, but don't want to give your chat data up to third parties? Use this. Everything runs on your machine and stores your chat data to a local SQLite database file (data/journal.db). Installable via a lightweight installer.
 
 Technologies:
 - LLM Model: deepseek-r1:1.5b
@@ -22,6 +22,23 @@ ollama run deepseek-r1:1.5b
 ```
 
 ## Features
+
+## Architecture
+```mermaid
+flowchart
+  user@{ shape: manual-input, label: "User Input"}
+  ui["WebView frontend<br/>(React Tauri library)"]
+  api["Rust backend<br/>(Rust Tauri library)"]
+  db[("SQLite<br/>(journal.db file)")]
+  ollama["Ollama<br/>"]
+  ollama@{ shape: fr-rect, label: "Ollama"}
+  llm@{shape: rect, label: "LLM Model<br/>(e.g. DeepSeek model)"}
+  
+  user -->|uses| ui
+  ui -->|calls commands| api -->|Saves/loads data| db
+  api -->|feeds/retrieves text input to/from subprocess| ollama
+  ollama -->|runs| llm
+```
 
 ## Development Setup Notes
 ### Create Svelte Frontend
