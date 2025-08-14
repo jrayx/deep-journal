@@ -1,9 +1,8 @@
 # deep-journal
-Like to use LLMs, but don't want to give your chat data up to third parties? Use this. Everything runs on your machine and stores your chat data to a local SQLite database file (data/journal.db). Installable via a lightweight installer.
+Like to use LLMs, but don't want to give your chat data up to third parties? Use this. Everything runs on your machine and stores your chat data to a local SQLite database file (`journal.db`). Installable via a lightweight installer.
 
 Technologies:
-- LLM Model: deepseek-r1:1.5b
-  - The app can easily be modified to select more model options from dropdown menu
+- LLM Model: deepseek-r1:1.5b (see Future section for more)
 - Frontend: Svelte + Tauri
 - Backend: Rust + Tauri
 - Database: SQLite
@@ -11,7 +10,7 @@ Technologies:
   
 ## Installation
 1. [Download and install Ollama CLI](https://ollama.com/download). (This is what runs the DeepSeek model.)
-2. Go to GitHub Releases page and install deep-journal installer.
+2. Go to GitHub Releases page and install the `deep-journal` installer.
 3. Optional: install [DB Browser for SQLite](https://sqlitebrowser.org/) to browse/query/export chat data in your `journal.db` file.
 
 ## Model Setup
@@ -91,3 +90,6 @@ npm run build
 npm run tauri build
 ```
 On Windows, path to built program is: "tauri-app\src-tauri\target\release\app.exe"
+
+## Future
+The app can easily be modified to select more model options from dropdown menu, as there is a built in `models` table. The backend is pulling from this `models` table and selecting the first one. For now, the `models` table only has the mentioned DeepSeek model, and the model dropdown on the top right of the UI is a grayed out (unselectable) dropdown.
