@@ -38,7 +38,7 @@ All data is stored to local SQLite `journal.db` file, so when you close the app 
 ```mermaid
 flowchart
   user@{ shape: manual-input, label: "User Input"}
-  ui["WebView frontend<br/>(Tauri NPM library)"]
+  ui["WebView frontend<br/>(Svelte + Tauri NPM library)"]
   api["Rust backend<br/>(Rust Tauri library)"]
   db[("SQLite<br/>(journal.db file)")]
   ollama["Ollama<br/>"]
