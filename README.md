@@ -1,5 +1,5 @@
 # deep-journal
-Like to use LLMs, but don't want to give your chat data up to third parties? Use this. Everything runs on your machine and stores your chat data to a local SQLite database file (`journal.db`). Installable via a lightweight installer.
+Like to use LLMs, but don't want to give your chat data up to third parties? Use this. Everything runs on your machine and stores your chat data to a local SQLite database file (`journal.db`).
 
 Technologies:
 - LLM Model: deepseek-r1:1.5b (see Future section for more)
@@ -10,7 +10,7 @@ Technologies:
   
 ## Installation
 1. [Download and install Ollama CLI](https://ollama.com/download). (This is what runs the DeepSeek model.)
-2. Go to GitHub Releases page and install the `deep-journal` installer.
+2. Go to GitHub Releases page and run the `deep-journal` installer.
 3. Optional: install [DB Browser for SQLite](https://sqlitebrowser.org/) to browse/query/export chat data in your `journal.db` file.
 
 ## Model Setup
